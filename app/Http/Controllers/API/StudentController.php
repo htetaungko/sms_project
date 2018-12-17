@@ -4,9 +4,9 @@ namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Classes;
+use App\Student;
 
-class ClassController extends Controller
+class StudentController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,7 +15,7 @@ class ClassController extends Controller
      */
     public function index()
     {
-        return Classes::latest()->paginate(10);
+        return Student::latest()->paginate(10);
     }
 
     /**
@@ -26,11 +26,12 @@ class ClassController extends Controller
      */
     public function store(Request $request)
     {
-        
-        // return $request->all();
-        return Classes::create([
-            'class_name'=> $request['class_name'],
-            'section_name'=> $request['section_name']
+        return Student::create([
+            'name'=>$request['name'],
+            'email'=>$request['email'],
+            'father_name'=>$request['father_name'],
+            'address'=>$request['address'],
+            'student_class'=>$request['student_class']
         ]);
     }
 
@@ -65,9 +66,7 @@ class ClassController extends Controller
      */
     public function destroy($id)
     {
-        $class = Classes::findOrFail($id);
-        $class->delete();
-        //delete class
-        return ['message'=>'deleted'];
+        $student = Student::findOrFail($id);
+        $student->delete();
     }
 }

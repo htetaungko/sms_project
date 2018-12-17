@@ -24,11 +24,9 @@
                             <td>{{ classinfo.class_name }}</td>
                             <td>{{ classinfo.section_name }}</td>
                             <td>
-                                <a href="#" class="text-info">
-                                <i class="nav-icon fas fa-edit"></i>
-                                Edit</a> | <a href="#" class="text-danger">
+                                <button @click="deleteClass(classinfo.id)" href="#" class="text-danger">
                                 <i class="nav-icon fas fa-trash"></i>
-                                Delete</a>
+                                Delete</button>
                             </td>
                         </tr>
                     </tbody>
@@ -100,15 +98,59 @@ export default {
     },
     methods: {
         getClass() {
+            this.$Progress.start()
             axios.get('api/class')
                 .then(({data}) => (this.classes = data.data));
         },
         createClass(){
-            this.form.post('api/class');
+            this.$Progress.start()
+            this.form.post('api/class')
+                .then(()=>{
+                    Refresh.$emit('RefreshClasses');
+                    $('#addSectionModal').modal('hide');
+                     toast({
+                        type: 'success',
+                        title: 'Added successfully'
+                    })
+                    this.$Progress.finish()
+                })
+                .catch(()=>{
+
+                })
+        },
+        deleteClass(id) {
+            swal({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                // send request here
+                if (result.value) {
+                this.form.delete('api/class/'+id)
+                    .then( ()=> {                      
+                            swal(
+                            'Deleted!',
+                            'Your file has been deleted.',
+                            'success'
+                            )
+                            Refresh.$emit('RefreshClasses')
+                    })
+                    .catch( ()=> {
+                        swal('Failed', 'There are something wrong.', 'warning')
+                    })
+                }                
+            })
         }
     },
     created() {
         this.getClass();
+        Refresh.$on('RefreshClasses', () => {
+            this.getClass();
+        });
     },
     mounted() {
 
