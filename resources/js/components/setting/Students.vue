@@ -16,7 +16,7 @@
                         <tr>
                             <th>ID</th>
                             <th>Student Name</th>
-                            <th>Studnet Email</th>
+                            <th>Student Email</th>
                             <th>Father Name</th>
                             <th>Address</th>
                             <th>Student Class</th>
@@ -102,6 +102,18 @@
                                         <has-error :form="form" field="student_class"></has-error>
                                         </div>
                                     </div>
+                                    <div class="form-group">
+                                      <label>Minimal</label>
+                                      <select class="form-control select2 select2-hidden-accessible" style="width: 100%;" tabindex="-1" aria-hidden="true">
+                                        <option selected="selected">Alabama</option>
+                                        <option>Alaska</option>
+                                        <option>California</option>
+                                        <option>Delaware</option>
+                                        <option>Tennessee</option>
+                                        <option>Texas</option>
+                                        <option>Washington</option>
+                                      </select><span class="select2 select2-container select2-container--default select2-container--below" dir="ltr" style="width: 100%;"><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-autocomplete="list" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-labelledby="select2-iyf0-container"><span class="select2-selection__rendered" id="select2-iyf0-container" title="Alaska">Alaska</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+                                    </div>
                                 </div>
                             <!-- /.card-body -->
                         </div>
@@ -135,12 +147,17 @@ export default {
         getStudents() {
             this.$Progress.start()
             axios.get('api/students')
-                .then(({data}) => (this.students = data.data));
+                .then(({data}) => (this.students = data.data))
+                .catch( ()=> {
+                    console.log('No Student`s Data');
+                    this.$Progress.fail()
+                })
         },
         createStudent(){
             this.$Progress.start()
             this.form.post('api/students')
                 .then(()=>{
+                    this.form.reset()
                     Refresh.$emit('refreshStudents');
                     $('#addStudentModal').modal('hide');
                      toast({
@@ -150,7 +167,7 @@ export default {
                     this.$Progress.finish()
                 })
                 .catch(()=>{
-
+                    this.$PRogress.fail()
                 })
         },
         deleteStudent(id) {
