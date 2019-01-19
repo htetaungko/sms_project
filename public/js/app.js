@@ -14093,7 +14093,12 @@ Vue.component('example-component', __webpack_require__(57));
 
 var app = new Vue({
 	el: '#app',
-	router: router
+	router: router,
+	methods: {
+		printme: function printme() {
+			window.print();
+		}
+	}
 });
 
 /***/ }),
